@@ -2,23 +2,36 @@ import { StackTrace } from "./StackTrace";
 
 type Props = {
     data: StackTrace | undefined;
-	threshold: number;
+    threshold: number | undefined;
+    highlight: number | undefined;
 };
 
-export const Trace = ({ data, threshold }: Props) => {
+const STYLE_NORMAL = {
+    color: 'black'
+};
+const STYLE_HIGHLIGHTED = {
+    color: 'red'
+};
+
+export const Trace = ({ data, threshold, highlight }: Props) => {
     if (!data) return <></>;
 
-    const duration = data.duration;
-    if (duration && duration !== -1 && duration < threshold) return <></>;
+    let style = STYLE_NORMAL;
+
+    if (data.duration) {
+        if (threshold && data.duration !== -1 && data.duration < threshold) return <></>;
+
+        if (highlight && data.duration > highlight) style = STYLE_HIGHLIGHTED;
+    }
 
     let children;
     if (data.children) {
-        children = data.children.map(c => <Trace data={c} threshold={threshold}></Trace>);
+        children = data.children.map((c, i) => <Trace key={i} data={c} threshold={threshold} highlight={highlight}></Trace>);
     }
 
     return (
         <>
-            <p>{data.duration} {data.name}</p>
+            <p style={style}>{data.duration} {data.name}</p>
             <div style={{ paddingLeft: 20 }}>
                 {children}
             </div>
