@@ -30,20 +30,27 @@ export const Trace = ({ data, threshold, highlight, showInlineParams }: Props) =
         displayDuration = '';
     }
 
-    // Show parameters in the tooltip of the trace
-    let tooltip = `input: ${data.input}\noutput: ${data.output}`;
+    const hasParams = (data.input) || (data.output);
+    const hasChildren = (data.children && data.children.length);
 
-    let hasParams = (data.input) || (data.output);
+    // Show parameters in the tooltip of the trace if there's any
+    let tooltip;
+    if (hasParams) tooltip = `input: ${data.input}\noutput: ${data.output}`;
 
-    let children;
-    if (!collapsed && data.children) {
-        children = data.children.map((c, i) => <Trace key={i} data={c} threshold={threshold} highlight={highlight} showInlineParams={showInlineParams}></Trace>);
+    // Show expand icon if there's children
+    let expandIcon;
+    if (hasChildren) expandIcon = (collapsed) ? '►' : '▼';
+
+    // Prepare child elements
+    let childTraces;
+    if (!collapsed && hasChildren) {
+        childTraces = data.children.map((c, i) => <Trace key={i} data={c} threshold={threshold} highlight={highlight} showInlineParams={showInlineParams}></Trace>);
     }
 
     return (
         <>
             <div className="horizontalFlex">
-                <button className="transparentBtn" onClick={() => setCollapsed(!collapsed)}>{(collapsed) ? '►' : '▼'}</button>
+                <button className="transparentBtn" onClick={() => setCollapsed(!collapsed)}>{expandIcon}</button>
                 <p
                     className={className}
                     onClick={() => setCollapsed(!collapsed)}
@@ -59,7 +66,7 @@ export const Trace = ({ data, threshold, highlight, showInlineParams }: Props) =
                 }
             </div>
             <div style={{ paddingLeft: 20 }}>
-                {children}
+                {childTraces}
             </div>
         </>
     );
