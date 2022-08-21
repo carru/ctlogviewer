@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { NumericInput } from './NumericInput';
-import { busCodeListToJsonString, xmlToBusCodeList } from './Parser';
+import { parseXml } from './Parser';
 import { StackTrace } from './StackTrace';
 import { Trace } from './Trace';
 import './App.css';
+import { CheckboxInput } from './CheckboxInput';
 
 function App() {
 	const [data, setData] = useState<StackTrace>();
 	const [threshold, setThreshold] = useState<number | undefined>();
 	const [highlight, setHighlight] = useState<number | undefined>();
+	const [showInlineParams, setShowInlineParams] = useState<boolean>();
 
 	function loadFile(f: File) {
 		if (!f) return;
@@ -18,10 +20,7 @@ function App() {
 			const text = (e.target?.result);
 			if (!text) return;
 
-			const nodes = xmlToBusCodeList(text as string);
-			const jsonString = busCodeListToJsonString(nodes);
-			const jsonObj = JSON.parse(jsonString);
-			setData(jsonObj);
+			setData(parseXml(text as string));
 		};
 		reader.readAsText(f);
 	}
@@ -31,6 +30,9 @@ function App() {
 			<div id="settings" className='horizontalFlex'>
 				<input type="file" onChange={(e) => loadFile(e.target.files![0])} />
 				<div>
+					<CheckboxInput defaultValue={false} handleChange={setShowInlineParams} label="Inline Params"></CheckboxInput>
+				</div>
+				<div>
 					<NumericInput defaultValue={10} handleChange={setThreshold} label="Threshold"></NumericInput>
 				</div>
 				<div>
@@ -38,7 +40,7 @@ function App() {
 				</div>
 			</div>
 			<div id='traces'>
-				<Trace data={data} threshold={threshold} highlight={highlight}></Trace>
+				<Trace data={data} threshold={threshold} highlight={highlight} showInlineParams={showInlineParams}></Trace>
 			</div>
 		</div>
 	)

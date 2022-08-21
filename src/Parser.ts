@@ -1,7 +1,14 @@
 import { XMLParser } from "fast-xml-parser";
 import { BusCode } from "./BusCode";
+import { StackTrace } from "./StackTrace";
 
-export function xmlToBusCodeList(xml: string): [BusCode] {
+export function parseXml(xml: string): StackTrace {
+	const busCodes = xmlToBusCodeList(xml);
+	const jsonString = busCodeListToJsonString(busCodes);
+	return JSON.parse(jsonString);
+}
+
+function xmlToBusCodeList(xml: string): [BusCode] {
 	const options = {
 		ignoreAttributes: false,
 		attributeNamePrefix: "",
@@ -20,8 +27,14 @@ function preProcessXml(raw: string): string {
 	processed = processed.replaceAll(/^<BusCode>$/gm, '<BusCode');
 	// Close BusCode node
 	processed = processed.replaceAll(/^<\/BusCode>$/gm, '/>');
+
 	// Escape quotes
-	processed = processed.replaceAll(/"/gm, '&quot;');
+	// processed = processed.replaceAll(/"/gm, '&quot;');
+	processed = processed.replaceAll(/"/gm, ''); // Remove them instead; json parser doesn't like it
+	// Remove control characters
+	// processed = processed.replaceAll(/[[:cntrl:]]/gm, '');
+	processed = processed.replaceAll(/[,,,]/gm, '');
+	
 	// Add quotes to attributes (those already with equal sign)
 	processed = processed.replaceAll(/^(\w*=)(.*)$/gm, '$1"$2"');
 	// Add quotes to attributes (those with a colon)
@@ -30,8 +43,7 @@ function preProcessXml(raw: string): string {
 	return processed;
 }
 
-export function busCodeListToJsonString(list: [BusCode]): string {
-	const len = list.length;
+function busCodeListToJsonString(list: [BusCode]): string {
 	const BATCH_SIZE = 100;
 	let batches: [string?] = [];
 
@@ -40,17 +52,16 @@ export function busCodeListToJsonString(list: [BusCode]): string {
 	list.forEach((buscode, i) => {
 		lastChar = json.slice(-1);
 		if (!(i % BATCH_SIZE)) {
-			// console.log(`${i + 1}/${len}`);
 			batches.push(json);
 			json = '';
 		}
 
 		if (buscode.START) {
 			if (lastChar === '}') json = `${json},`;
-			json = `${json}{"name":"${buscode.method}","children":[`;
+			json = `${json}{"name":"${buscode.method}","input":"${buscode.In}","children":[`;
 		} else {
 			const duration = (buscode.duration) ? buscode.duration : -1;
-			json = `${json}],"duration":${duration}}`;
+			json = `${json}],"output":"${buscode.Out}","duration":${duration}}`;
 		}
 	});
 	json = `${json}]}`;

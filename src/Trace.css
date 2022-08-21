@@ -10,3 +10,10 @@
 p {
     margin: 0;
 }
+
+.params {
+    font-size: .8em;
+    line-height: 100%;
+    justify-content: center;
+    margin-left: .5em;
+}

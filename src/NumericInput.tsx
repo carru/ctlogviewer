@@ -11,7 +11,6 @@ export const NumericInput = ({ defaultValue, handleChange, label }: Props) => {
 	const [value, setValue] = useState(defaultValue);
 
 	useEffect(() => {
-		console.log('useEffect');
 		handleChange(effectiveValue());
 	})
 
