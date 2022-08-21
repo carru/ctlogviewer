@@ -20,9 +20,9 @@ export const NumericInput = ({ defaultValue, handleChange, label }: Props) => {
 
 	return (
 		<>
-			<label>{label}</label>
+			<label style={{marginRight: '0.25em'}}>{label}</label>
 			<label>
-				<input type="number" value={value} onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(Number(e.target.value))} />
+				<input type="number" style={{width: '4em', marginRight: '0.25em'}} value={value} onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(Number(e.target.value))} />
 				ms
 			</label>
 			<label>
