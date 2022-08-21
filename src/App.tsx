@@ -6,8 +6,8 @@ import { Trace } from './Trace';
 
 function App() {
 	const [data, setData] = useState<StackTrace>();
-	const [threshold, setThreshold] = useState<number | undefined>(10);
-	const [highlight, setHighlight] = useState<number | undefined>(200);
+	const [threshold, setThreshold] = useState<number | undefined>();
+	const [highlight, setHighlight] = useState<number | undefined>();
 
 	function loadFile(f: File) {
 		if (!f) return;
@@ -28,8 +28,8 @@ function App() {
 	return (
 		<div className="App">
 			<input type="file" onChange={(e) => loadFile(e.target.files![0])} />
-			<NumericInput defaultValue={threshold} handleChange={setThreshold} label="Threshold"></NumericInput>
-			<NumericInput defaultValue={highlight} handleChange={setHighlight} label="Highlight"></NumericInput>
+			<NumericInput defaultValue={10} handleChange={setThreshold} label="Threshold"></NumericInput>
+			<NumericInput defaultValue={200} handleChange={setHighlight} label="Highlight"></NumericInput>
 			<Trace data={data} threshold={threshold} highlight={highlight}></Trace>
 		</div>
 	)
