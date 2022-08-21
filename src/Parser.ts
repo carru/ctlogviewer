@@ -31,9 +31,8 @@ function preProcessXml(raw: string): string {
 	// Escape quotes
 	// processed = processed.replaceAll(/"/gm, '&quot;');
 	processed = processed.replaceAll(/"/gm, ''); // Remove them instead; json parser doesn't like it
-	// Remove control characters
-	// processed = processed.replaceAll(/[[:cntrl:]]/gm, '');
-	processed = processed.replaceAll(/[,,,]/gm, '');
+	// Remove all control characters except new line
+	processed = processed.replaceAll(/[^\P{C}\n]/gu, '');
 
 	// Add quotes to attributes (those already with equal sign)
 	processed = processed.replaceAll(/^(\w*=)(.*)$/gm, '$1"$2"');
