@@ -29,7 +29,7 @@ export const Trace = ({ data, threshold, highlight }: Props) => {
     return (
         <>
             <div className="horizontalFlex">
-                <button onClick={() => setCollapsed(!collapsed)}>{(collapsed) ? '▼' : '▲'}</button>
+                <button className="transparentBtn" onClick={() => setCollapsed(!collapsed)}>{(collapsed) ? '►' : '▼'}</button>
                 <p className={className} onClick={() => setCollapsed(!collapsed)}>{data.duration} {data.name}</p>
             </div>
             <div style={{ paddingLeft: 20 }}>
