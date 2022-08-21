@@ -1,4 +1,5 @@
 import { StackTrace } from "./StackTrace";
+import './Trace.css';
 
 type Props = {
     data: StackTrace | undefined;
@@ -6,22 +7,15 @@ type Props = {
     highlight: number | undefined;
 };
 
-const STYLE_NORMAL = {
-    color: 'black'
-};
-const STYLE_HIGHLIGHTED = {
-    color: 'red'
-};
-
 export const Trace = ({ data, threshold, highlight }: Props) => {
     if (!data) return <></>;
 
-    let style = STYLE_NORMAL;
+    let className = '';
 
     if (data.duration !== undefined) {
         if (threshold && data.duration !== -1 && data.duration < threshold) return <></>;
 
-        if (highlight && data.duration > highlight) style = STYLE_HIGHLIGHTED;
+        if (highlight && data.duration > highlight) className += 'highlighted';
     }
 
     let children;
@@ -31,7 +25,7 @@ export const Trace = ({ data, threshold, highlight }: Props) => {
 
     return (
         <>
-            <p style={style}>{data.duration} {data.name}</p>
+            <p className={className}>{data.duration} {data.name}</p>
             <div style={{ paddingLeft: 20 }}>
                 {children}
             </div>

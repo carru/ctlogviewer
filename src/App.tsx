@@ -3,6 +3,7 @@ import { NumericInput } from './NumericInput';
 import { busCodeListToJsonString, xmlToBusCodeList } from './Parser';
 import { StackTrace } from './StackTrace';
 import { Trace } from './Trace';
+import './App.css';
 
 function App() {
 	const [data, setData] = useState<StackTrace>();
@@ -26,11 +27,19 @@ function App() {
 	}
 
 	return (
-		<div className="App">
-			<input type="file" onChange={(e) => loadFile(e.target.files![0])} />
-			<NumericInput defaultValue={10} handleChange={setThreshold} label="Threshold"></NumericInput>
-			<NumericInput defaultValue={200} handleChange={setHighlight} label="Highlight"></NumericInput>
-			<Trace data={data} threshold={threshold} highlight={highlight}></Trace>
+		<div id="app">
+			<div id="settings">
+				<input type="file" onChange={(e) => loadFile(e.target.files![0])} />
+				<div>
+					<NumericInput defaultValue={10} handleChange={setThreshold} label="Threshold"></NumericInput>
+				</div>
+				<div>
+					<NumericInput defaultValue={200} handleChange={setHighlight} label="Highlight"></NumericInput>
+				</div>
+			</div>
+			<div id='traces'>
+				<Trace data={data} threshold={threshold} highlight={highlight}></Trace>
+			</div>
 		</div>
 	)
 }
