@@ -1,33 +1,24 @@
-import { FC } from "react";
-import Tree from "react-animated-tree";
 import { StackTrace } from "./StackTrace";
 
-export const Trace: FC<{ data: StackTrace | undefined }> = (props) => {
-    if (!props.data) return <></>;
+type Props = {
+    data: StackTrace | undefined;
+	threshold: number;
+};
 
-    const duration = props.data.duration;
-    if (duration && duration !== -1 && duration < 10) return <></>;
+export const Trace = ({ data, threshold }: Props) => {
+    if (!data) return <></>;
+
+    const duration = data.duration;
+    if (duration && duration !== -1 && duration < threshold) return <></>;
 
     let children;
-    if (props.data.children) {
-        children = props.data.children.map(c =>
-            <>
-
-                <Trace data={c}></Trace>
-            </>
-        );
+    if (data.children) {
+        children = data.children.map(c => <Trace data={c} threshold={threshold}></Trace>);
     }
-
-    // const content = `${props.data.duration} ${props.data.name}`;
-    // return (
-    //     <Tree content={content} >
-    //         {children}
-    //     </Tree>
-    // );
 
     return (
         <>
-            <p>{props.data.duration} {props.data.name}</p>
+            <p>{data.duration} {data.name}</p>
             <div style={{ paddingLeft: 20 }}>
                 {children}
             </div>
