@@ -1,6 +1,4 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-// import './App.css'
 import { busCodeListToJsonString, xmlToBusCodeList } from './Parser';
 import { StackTrace } from './StackTrace';
 import { Trace } from './Trace';
