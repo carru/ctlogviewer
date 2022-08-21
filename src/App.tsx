@@ -5,12 +5,14 @@ import { StackTrace } from './StackTrace';
 import { Trace } from './Trace';
 import './App.css';
 import { CheckboxInput } from './CheckboxInput';
+import { LoadingMask } from './LoadingMask';
 
 function App() {
 	const [data, setData] = useState<StackTrace>();
 	const [threshold, setThreshold] = useState<number | undefined>();
 	const [highlight, setHighlight] = useState<number | undefined>();
 	const [showInlineParams, setShowInlineParams] = useState<boolean>();
+	const [loading, setLoading] = useState(false);
 
 	function loadFile(f: File) {
 		if (!f) return;
@@ -21,12 +23,15 @@ function App() {
 			if (!text) return;
 
 			setData(parseXml(text as string));
+			setLoading(false);
 		};
 		reader.readAsText(f);
+		setLoading(true);
 	}
 
 	return (
 		<div id="app">
+			{loading && <LoadingMask />}
 			<div id="settings" className='horizontalFlex'>
 				<input type="file" onChange={(e) => loadFile(e.target.files![0])} />
 				<div>
