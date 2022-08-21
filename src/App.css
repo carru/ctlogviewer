@@ -1,7 +1,11 @@
 #settings {
-  display: flex;
-  flex-direction: row;
   justify-content: space-between;
   position: sticky;
   top: 1em;
+  margin-bottom: 1em;
+}
+
+.horizontalFlex {
+  display: flex;
+  flex-direction: row;
 }

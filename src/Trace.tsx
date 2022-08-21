@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { StackTrace } from "./StackTrace";
 import './Trace.css';
 
@@ -8,6 +9,8 @@ type Props = {
 };
 
 export const Trace = ({ data, threshold, highlight }: Props) => {
+    const [collapsed, setCollapsed] = useState(false);
+
     if (!data) return <></>;
 
     let className = '';
@@ -19,13 +22,16 @@ export const Trace = ({ data, threshold, highlight }: Props) => {
     }
 
     let children;
-    if (data.children) {
+    if (!collapsed && data.children) {
         children = data.children.map((c, i) => <Trace key={i} data={c} threshold={threshold} highlight={highlight}></Trace>);
     }
 
     return (
         <>
-            <p className={className}>{data.duration} {data.name}</p>
+            <div className="horizontalFlex">
+                <button onClick={() => setCollapsed(!collapsed)}>{(collapsed) ? '▼' : '▲'}</button>
+                <p className={className} onClick={() => setCollapsed(!collapsed)}>{data.duration} {data.name}</p>
+            </div>
             <div style={{ paddingLeft: 20 }}>
                 {children}
             </div>

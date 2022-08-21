@@ -1,3 +1,12 @@
 .highlighted {
     color: red;
 }
+
+button {
+    background-color: transparent;
+    border: none;
+}
+
+p {
+    margin: 0;
+}

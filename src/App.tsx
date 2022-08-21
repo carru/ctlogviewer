@@ -28,7 +28,7 @@ function App() {
 
 	return (
 		<div id="app">
-			<div id="settings">
+			<div id="settings" className='horizontalFlex'>
 				<input type="file" onChange={(e) => loadFile(e.target.files![0])} />
 				<div>
 					<NumericInput defaultValue={10} handleChange={setThreshold} label="Threshold"></NumericInput>
