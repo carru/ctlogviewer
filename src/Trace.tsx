@@ -18,7 +18,7 @@ export const Trace = ({ data, threshold, highlight }: Props) => {
 
     let style = STYLE_NORMAL;
 
-    if (data.duration) {
+    if (data.duration !== undefined) {
         if (threshold && data.duration !== -1 && data.duration < threshold) return <></>;
 
         if (highlight && data.duration > highlight) style = STYLE_HIGHLIGHTED;
