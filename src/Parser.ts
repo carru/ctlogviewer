@@ -34,7 +34,7 @@ function preProcessXml(raw: string): string {
 	// Remove control characters
 	// processed = processed.replaceAll(/[[:cntrl:]]/gm, '');
 	processed = processed.replaceAll(/[,,,]/gm, '');
-	
+
 	// Add quotes to attributes (those already with equal sign)
 	processed = processed.replaceAll(/^(\w*=)(.*)$/gm, '$1"$2"');
 	// Add quotes to attributes (those with a colon)
@@ -49,6 +49,7 @@ function busCodeListToJsonString(list: [BusCode]): string {
 
 	let json = '';
 	let lastChar = '';
+	let depth = 0;
 	list.forEach((buscode, i) => {
 		lastChar = json.slice(-1);
 		if (!(i % BATCH_SIZE)) {
@@ -57,14 +58,19 @@ function busCodeListToJsonString(list: [BusCode]): string {
 		}
 
 		if (buscode.START) {
+			depth++;
 			if (lastChar === '}') json = `${json},`;
 			json = `${json}{"name":"${buscode.method}","input":"${buscode.In}","children":[`;
 		} else {
+			depth--;
 			const duration = (buscode.duration) ? buscode.duration : -1;
 			json = `${json}],"output":"${buscode.Out}","duration":${duration}}`;
 		}
 	});
-	json = `${json}]}`;
+
+	// Somehow, main trace is not always closed. This is kind of a hack
+	json += ']}'.repeat(depth);
+
 	batches.push(json);
 
 	return batches.join('');
