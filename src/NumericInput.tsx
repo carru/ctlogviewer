@@ -1,8 +1,8 @@
 import { ChangeEvent, useEffect, useState } from "react";
 
 type Props = {
-	defaultValue: number | undefined;
-	handleChange: (value: number | undefined) => void;
+	defaultValue?: number;
+	handleChange: (value?: number) => void;
 	label: string;
 };
 
@@ -12,7 +12,7 @@ export const NumericInput = ({ defaultValue, handleChange, label }: Props) => {
 
 	useEffect(() => {
 		handleChange(effectiveValue());
-	})
+	}, [value, enabled]);
 
 	function effectiveValue() {
 		return (enabled) ? value : undefined;

@@ -11,7 +11,7 @@ export const CheckboxInput = ({ defaultValue, handleChange, label }: Props) => {
 
 	useEffect(() => {
 		handleChange(value);
-	})
+	}, [value]);
 
 	return (
 		<>
