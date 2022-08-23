@@ -1,4 +1,4 @@
-import { forwardRef, PropsWithChildren, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { StackTrace } from "./StackTrace";
 import './Trace.css';
 
@@ -41,7 +41,6 @@ export const Trace = forwardRef((props: TraceProps, ref) => {
             isVisible = false;
             areChildrenVisible = false; // Don't render to improve performance
         }
-
         // Highlight traces over highlighted threshold
         if (highlight && data.duration > highlight) rowClassName += 'highlighted';
 
@@ -53,16 +52,13 @@ export const Trace = forwardRef((props: TraceProps, ref) => {
     // Hide this row if doesn't match the filter
     if (nameFilter && data.name.search(nameFilter) === -1) isVisible = false;
     // But show it if one of its children does
-    if (childrenVisibility.includes(true)) {
-        isVisible = true;
-    }
+    if (childrenVisibility.includes(true)) isVisible = true;
 
-    const hasParams = (data.input) || (data.output);
-    const hasChildren = (data.children && data.children.length);
+    const hasParams = (data.input !== '') || (data.output !== '');
+    const hasChildren = (data.children && data.children.length > 0);
 
-    // Show parameters in the tooltip of the trace if there's any
-    let tooltip;
-    if (hasParams) tooltip = `input: ${data.input}\noutput: ${data.output}`;
+    // Show parameters in the tooltip of the trace
+    const tooltip = `input: ${data.input}\noutput: ${data.output}`;
 
     // Show expand icon if there's children
     let expandIcon;

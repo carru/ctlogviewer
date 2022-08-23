@@ -59,11 +59,13 @@ function busCodeListToJsonString(list: [BusCode]): string {
 		if (buscode.START) {
 			depth++;
 			if (lastChar === '}') json = `${json},`;
-			json = `${json}{"name":"${buscode.method}","input":"${buscode.In}","children":[`;
+			const input = `"input":"${(buscode.In) ? buscode.In : ''}"`;
+			json = `${json}{"name":"${buscode.method}",${input},"children":[`;
 		} else {
 			depth--;
-			const duration = (buscode.duration) ? buscode.duration : -1;
-			json = `${json}],"output":"${buscode.Out}","duration":${duration}}`;
+			const duration = `"duration":${(buscode.duration) ? buscode.duration : -1}`;
+			const output = `"output":"${(buscode.Out) ? buscode.Out : ''}"`;
+			json = `${json}],${output},${duration}}`;
 		}
 	});
 
