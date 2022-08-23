@@ -1,18 +1,30 @@
-import { useState } from "react";
+import { forwardRef, PropsWithChildren, useImperativeHandle, useRef, useState } from "react";
 import { StackTrace } from "./StackTrace";
 import './Trace.css';
 
-type Props = {
-    data: StackTrace | undefined;
-    threshold: number | undefined;
-    highlight: number | undefined;
-    showInlineParams: boolean | undefined;
+export type TraceProps = {
+    data: StackTrace;
+    threshold?: number;
+    highlight?: number;
+    showInlineParams?: boolean;
+    parentCollapsed?: boolean;
+};
+export type TraceRef = {
+    collapseExpandAll: (collapsed: boolean) => void
 };
 
-export const Trace = ({ data, threshold, highlight, showInlineParams }: Props) => {
-    const [collapsed, setCollapsed] = useState(false);
+export const Trace = forwardRef((props: TraceProps, ref) => {
+    useImperativeHandle(ref, () => ({
+        collapseExpandAll(collapsed: boolean) {
+            setCollapsed(collapsed);
+            childRefs.current.forEach(r => r?.collapseExpandAll(collapsed));
+        }
+    }));
 
-    if (!data) return <></>;
+    const [collapsed, setCollapsed] = useState(false);
+    const childRefs = useRef<TraceRef[]>([]);
+
+    const { data, threshold, highlight, showInlineParams, parentCollapsed } = props;
 
     let className = '';
     let displayDuration;
@@ -43,13 +55,16 @@ export const Trace = ({ data, threshold, highlight, showInlineParams }: Props) =
 
     // Prepare child elements
     let childTraces;
-    if (!collapsed && hasChildren) {
-        childTraces = data.children.map((c, i) => <Trace key={i} data={c} threshold={threshold} highlight={highlight} showInlineParams={showInlineParams}></Trace>);
+    if (hasChildren) {
+        childTraces = data.children.map((c, i) => {
+            const childTraceProps: TraceProps = { data: c, threshold, highlight, showInlineParams, parentCollapsed: collapsed };
+            return <Trace ref={(ref: TraceRef) => childRefs.current[i] = ref} key={i} {...childTraceProps}></Trace>
+        });
     }
 
     return (
         <>
-            <div className="horizontalFlex">
+            {!parentCollapsed && <div className="horizontalFlex">
                 <button className="transparentBtn" onClick={() => setCollapsed(!collapsed)}>{expandIcon}</button>
                 <p
                     className={className}
@@ -64,10 +79,10 @@ export const Trace = ({ data, threshold, highlight, showInlineParams }: Props) =
                         <p className="params">output: {data.output}</p>
                     </div>
                 }
-            </div>
+            </div>}
             <div style={{ paddingLeft: 20 }}>
                 {childTraces}
             </div>
         </>
     );
-}
+});

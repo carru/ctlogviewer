@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { NumericInput } from './NumericInput';
 import { parseXml } from './Parser';
 import { StackTrace } from './StackTrace';
-import { Trace } from './Trace';
+import { Trace, TraceProps, TraceRef } from './Trace';
 import './App.css';
 import { CheckboxInput } from './CheckboxInput';
 import { LoadingMask } from './LoadingMask';
@@ -13,6 +13,7 @@ function App() {
 	const [highlight, setHighlight] = useState<number | undefined>();
 	const [showInlineParams, setShowInlineParams] = useState<boolean>();
 	const [loading, setLoading] = useState(false);
+	const stackTraceRef = useRef<TraceRef>(null);
 
 	function loadFile(f: File) {
 		if (!f) return;
@@ -29,11 +30,23 @@ function App() {
 		setLoading(true);
 	}
 
+	let traceElement;
+	if (data) {
+		let traceProps: TraceProps = { data: data, threshold: threshold, highlight: highlight, showInlineParams: showInlineParams };
+		traceElement = (
+			<div id='traces'>
+				<Trace ref={stackTraceRef} {...traceProps}></Trace>
+			</div>
+		);
+	}
+
 	return (
 		<div id="app">
 			{loading && <LoadingMask />}
 			<div id="settings" className='horizontalFlex'>
 				<input type="file" onChange={(e) => loadFile(e.target.files![0])} />
+				<button onClick={() => stackTraceRef.current?.collapseExpandAll(false)}>Expand All</button>
+				<button onClick={() => stackTraceRef.current?.collapseExpandAll(true)}>Collapse All</button>
 				<div>
 					<CheckboxInput defaultValue={false} handleChange={setShowInlineParams} label="Inline Params"></CheckboxInput>
 				</div>
@@ -44,9 +57,7 @@ function App() {
 					<NumericInput defaultValue={200} handleChange={setHighlight} label="Highlight"></NumericInput>
 				</div>
 			</div>
-			<div id='traces'>
-				<Trace data={data} threshold={threshold} highlight={highlight} showInlineParams={showInlineParams}></Trace>
-			</div>
+			{traceElement}
 		</div>
 	)
 }
