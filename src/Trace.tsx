@@ -17,13 +17,14 @@ export type TraceRef = {
 
 export const Trace = forwardRef((props: TraceProps, ref) => {
     useImperativeHandle(ref, () => ({
-        collapseExpandAll(collapsed: boolean) {
-            setCollapsed(collapsed);
-            setTimeout(() => {
-                childRefs.current.forEach(r => r?.collapseExpandAll(collapsed));
-            });
-        }
+        collapseExpandAll
     }));
+    const collapseExpandAll = (collapsed: boolean) => {
+        setCollapsed(collapsed);
+        setTimeout(() => {
+            childRefs.current.forEach(r => r?.collapseExpandAll(collapsed));
+        });
+    }
 
     const [collapsed, setCollapsed] = useState(true);
     const [childrenVisibility, setChildrenVisibility] = useState(new Array<boolean>(0));
@@ -54,7 +55,7 @@ export const Trace = forwardRef((props: TraceProps, ref) => {
     // But show it if one of its children does
     if (childrenVisibility.includes(true)) isVisible = true;
 
-    const hasParams = (data.input !== '') || (data.output !== '');
+    const hasParams = (data.input && data.input !== '') || (data.output && data.output !== '');
     const hasChildren = (data.children && data.children.length > 0);
 
     // Show parameters in the tooltip of the trace
@@ -90,6 +91,7 @@ export const Trace = forwardRef((props: TraceProps, ref) => {
         <>
             {isVisible && <div className="horizontalFlex">
                 <button className="transparentBtn" onClick={() => setCollapsed(!collapsed)}>{expandIcon}</button>
+                <button className="transparentBtn" onClick={() => collapseExpandAll(false)}>≫</button>
                 <p
                     className={rowClassName}
                     onClick={() => setCollapsed(!collapsed)}
