@@ -16,3 +16,12 @@
   display: flex;
   flex-direction: column;
 }
+
+.transparentBtn {
+  background-color: transparent;
+  border: none;
+}
+
+#themeToggle {
+  font-size: 1.25em;
+}

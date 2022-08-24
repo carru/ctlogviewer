@@ -6,6 +6,7 @@ import { Trace, TraceProps, TraceRef } from './Trace';
 import './App.css';
 import { CheckboxInput } from './CheckboxInput';
 import { LoadingMask } from './LoadingMask';
+import { RiSunLine, RiMoonLine } from 'react-icons/ri';
 
 const filterByNameHelp = `Records not currently visible are discarded to improve performance (e.g. those filtered by Threashold).
 For this reason, the filter by name functionality does not work on records that are not already visible.
@@ -19,6 +20,7 @@ function App() {
 	const [loading, setLoading] = useState(false);
 	const [nameFilter, setNameFilter] = useState('');
 	const stackTraceRef = useRef<TraceRef>(null);
+	const [colorScheme, setColorScheme] = useState('dark');
 
 	function loadFile(f: File) {
 		if (!f) return;
@@ -34,6 +36,14 @@ function App() {
 		reader.readAsText(f);
 		setLoading(true);
 	}
+
+	function toggleTheme() {
+		setColorScheme((colorScheme === 'dark') ? 'light' : 'dark');
+	}
+
+	// Hacky way of changing global theme
+	document.documentElement.style.setProperty('color-scheme', colorScheme);
+	const themeToggleIcon = (colorScheme === 'dark') ? <RiSunLine /> : <RiMoonLine />;
 
 	let traceElement;
 	if (data) {
@@ -65,6 +75,7 @@ function App() {
 				<div>
 					<NumericInput defaultValue={200} handleChange={setHighlight} label="Highlight"></NumericInput>
 				</div>
+				<button id='themeToggle' className='transparentBtn' onClick={toggleTheme}>{themeToggleIcon}</button>
 			</div>
 			{traceElement}
 		</div>
