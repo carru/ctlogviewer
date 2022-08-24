@@ -12,12 +12,20 @@ export type TraceProps = {
     visibilityCallback(traceId: number, rowVisibility: boolean): void;
 };
 export type TraceRef = {
-    collapseExpandAll: (collapsed: boolean) => void
+    collapseExpandAll: (collapsed: boolean) => void;
+    expandUntilHightlight: () => void;
 };
 
 export const Trace = forwardRef((props: TraceProps, ref) => {
+    const [collapsed, setCollapsed] = useState(true);
+    const [childrenVisibility, setChildrenVisibility] = useState(new Array<boolean>(0));
+    const childRefs = useRef<TraceRef[]>([]);
+
+    const { data, threshold, highlight, showInlineParams, nameFilter, visibilityCallback, traceId } = props;
+
     useImperativeHandle(ref, () => ({
-        collapseExpandAll
+        collapseExpandAll,
+        expandUntilHightlight
     }));
     const collapseExpandAll = (collapsed: boolean) => {
         setCollapsed(collapsed);
@@ -25,12 +33,14 @@ export const Trace = forwardRef((props: TraceProps, ref) => {
             childRefs.current.forEach(r => r?.collapseExpandAll(collapsed));
         });
     }
-
-    const [collapsed, setCollapsed] = useState(true);
-    const [childrenVisibility, setChildrenVisibility] = useState(new Array<boolean>(0));
-    const childRefs = useRef<TraceRef[]>([]);
-
-    const { data, threshold, highlight, showInlineParams, nameFilter, visibilityCallback, traceId } = props;
+    const expandUntilHightlight = () => {
+        if (data.duration === undefined || data.duration === -1 || (highlight && data.duration > highlight)) {
+            setCollapsed(false);
+            setTimeout(() => {
+                childRefs.current.forEach(r => r?.expandUntilHightlight());
+            });
+        }
+    }
 
     let rowClassName = '';
     let displayDuration;
@@ -90,8 +100,9 @@ export const Trace = forwardRef((props: TraceProps, ref) => {
     return (
         <>
             {isVisible && <div className="horizontalFlex">
-                <button className="transparentBtn" onClick={() => setCollapsed(!collapsed)}>{expandIcon}</button>
-                <button className="transparentBtn" onClick={() => collapseExpandAll(false)}>≫</button>
+                <button className="transparentBtn" onClick={() => setCollapsed(!collapsed)} title='Toggle this node'>{expandIcon}</button>
+                <button className="transparentBtn" onClick={() => expandUntilHightlight()} title='Expand recursively from here while greater than Highlight'>≫</button>
+                <button className="transparentBtn" onClick={() => collapseExpandAll(false)} title='Expand recursively from here'>⋙</button>
                 <p
                     className={rowClassName}
                     onClick={() => setCollapsed(!collapsed)}
