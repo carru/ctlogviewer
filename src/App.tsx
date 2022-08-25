@@ -70,7 +70,7 @@ function App() {
 			{loading && <FullScreenMessage label='Loading...' />}
 			{errorMessage && <FullScreenMessage label={errorMessage} />}
 			<div id="settings" className='horizontalFlex'>
-				<input type="file" accept='.ct.log' onChange={(e) => loadFile(e.target.files![0])} />
+				<input type="file" onChange={(e) => loadFile(e.target.files![0])} />
 				<button onClick={() => stackTraceRef.current?.collapseExpandAll(false)}>Expand All</button>
 				<button onClick={() => stackTraceRef.current?.collapseExpandAll(true)}>Collapse All</button>
 				<div>
