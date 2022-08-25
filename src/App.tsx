@@ -5,12 +5,17 @@ import { StackTrace } from './StackTrace';
 import { Trace, TraceProps, TraceRef } from './Trace';
 import './App.css';
 import { CheckboxInput } from './CheckboxInput';
-import { LoadingMask } from './LoadingMask';
 import { RiSunLine, RiMoonLine } from 'react-icons/ri';
+import { FullScreenMessage } from './FullScreenMessage';
 
 const filterByNameHelp = `Records not currently visible are discarded to improve performance (e.g. those filtered by Threashold).
 For this reason, the filter by name functionality does not work on records that are not already visible.
 You can get strange behaviour also by filtering and then toggling records. 'Expand All' helps in these cases.`;
+const getErrorMessage = (file: File, error: unknown) => `Something went wrong when reading ${file.name}
+Refresh page (F5) to remove this message
+If error persists, consider sharing this log with c4c
+
+Error details: ${error}`
 
 function App() {
 	const [data, setData] = useState<StackTrace>();
@@ -18,6 +23,7 @@ function App() {
 	const [highlight, setHighlight] = useState<number | undefined>();
 	const [showInlineParams, setShowInlineParams] = useState<boolean>();
 	const [loading, setLoading] = useState(false);
+	const [errorMessage, setErrorMessage] = useState('');
 	const [nameFilter, setNameFilter] = useState('');
 	const stackTraceRef = useRef<TraceRef>(null);
 	const [colorScheme, setColorScheme] = useState('dark');
@@ -30,7 +36,11 @@ function App() {
 			const text = (e.target?.result);
 			if (!text) return;
 
-			setData(parseXml(text as string));
+			try {
+				setData(parseXml(text as string));
+			} catch (error: unknown) {
+				setErrorMessage(getErrorMessage(f, error));
+			}
 			setLoading(false);
 		};
 		reader.readAsText(f);
@@ -57,7 +67,8 @@ function App() {
 
 	return (
 		<div id="app">
-			{loading && <LoadingMask />}
+			{loading && <FullScreenMessage label='Loading...' />}
+			{errorMessage && <FullScreenMessage label={errorMessage} />}
 			<div id="settings" className='horizontalFlex'>
 				<input type="file" accept='.ct.log' onChange={(e) => loadFile(e.target.files![0])} />
 				<button onClick={() => stackTraceRef.current?.collapseExpandAll(false)}>Expand All</button>

@@ -1,12 +1,12 @@
-#loading {
-    font-size: 500%;
+.fullScreenMessage {
+    font-size: 2em;
     position: absolute;
     top: 0;
     left: 0;
     min-width: 100%;
     min-height: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1;
