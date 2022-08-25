@@ -57,7 +57,10 @@ function App() {
 
 	let traceElement;
 	if (data) {
-		let traceProps: TraceProps = { data, threshold, highlight, showInlineParams, nameFilter, traceId: 0, visibilityCallback: () => { } };
+		let traceProps: TraceProps = {
+			data, threshold, highlight, showInlineParams, nameFilter,
+			traceId: 0, uniqueId: '0', visibilityCallback: () => { }
+		};
 		traceElement = (
 			<div id='traces'>
 				<Trace ref={stackTraceRef} {...traceProps}></Trace>

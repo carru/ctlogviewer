@@ -9,6 +9,7 @@ export type TraceProps = {
     showInlineParams?: boolean;
     nameFilter?: string;
     traceId: number;
+    uniqueId: string;
     visibilityCallback(traceId: number, rowVisibility: boolean): void;
 };
 export type TraceRef = {
@@ -21,7 +22,7 @@ export const Trace = forwardRef((props: TraceProps, ref) => {
     const [childrenVisibility, setChildrenVisibility] = useState(new Array<boolean>(0));
     const childRefs = useRef<TraceRef[]>([]);
 
-    const { data, threshold, highlight, showInlineParams, nameFilter, visibilityCallback, traceId } = props;
+    const { data, threshold, highlight, showInlineParams, nameFilter, visibilityCallback, traceId, uniqueId } = props;
 
     useImperativeHandle(ref, () => ({
         collapseExpandAll,
@@ -84,11 +85,12 @@ export const Trace = forwardRef((props: TraceProps, ref) => {
     let childTraces;
     if (!collapsed && hasChildren) {
         childTraces = data.children.map((c, i) => {
+            const childUniqueId = `${uniqueId}_${i}`;
             const childTraceProps: TraceProps = {
                 data: c, threshold, highlight, showInlineParams, nameFilter,
-                traceId: i, visibilityCallback: handleChildrenVisibility
+                traceId: i, uniqueId: childUniqueId, visibilityCallback: handleChildrenVisibility
             };
-            return <Trace ref={(ref: TraceRef) => childRefs.current[i] = ref} key={i} {...childTraceProps}></Trace>
+            return <Trace ref={(ref: TraceRef) => childRefs.current[i] = ref} key={childUniqueId} {...childTraceProps}></Trace>
         });
     }
 
