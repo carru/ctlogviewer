@@ -28,11 +28,13 @@ function preProcessXml(raw: string): string {
 	// Close BusCode node
 	processed = processed.replaceAll(/^<\/BusCode>$/gm, '/>');
 
-	// Escape quotes
-	// processed = processed.replaceAll(/"/gm, '&quot;');
-	processed = processed.replaceAll(/"/gm, ''); // Remove them instead; json parser doesn't like it
-	// Remove all control characters except new line
-	processed = processed.replaceAll(/[^\P{C}\n]/gu, '');
+	/**
+	 * Remove all characters other than
+	 * 	a-z, A-Z, 0-9, _
+	 * 	spaces and line breaks
+	 * 	<, >, =, :, [, ], ., /
+	 */
+	processed = processed.replaceAll(/[^\w\s<>=:\[\]\./]+/g, '');
 
 	// Add quotes to attributes (those already with equal sign)
 	processed = processed.replaceAll(/^(\w*=)(.*)$/gm, '$1"$2"');
