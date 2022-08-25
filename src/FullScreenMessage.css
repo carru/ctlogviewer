@@ -1,6 +1,6 @@
 .fullScreenMessage {
     font-size: 2em;
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     min-width: 100%;
