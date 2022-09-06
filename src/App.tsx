@@ -8,7 +8,7 @@ import { CheckboxInput } from './CheckboxInput';
 import { RiSunLine, RiMoonLine } from 'react-icons/ri';
 import { FullScreenMessage } from './FullScreenMessage';
 
-const filterByNameHelp = `Records not currently visible are discarded to improve performance (e.g. those filtered by Threashold).
+const filterByNameHelp = `Records not currently visible are discarded to improve performance (e.g. those filtered by Threshold).
 For this reason, the filter by name functionality does not work on records that are not already visible.
 You can get strange behaviour also by filtering and then toggling records. 'Expand All' helps in these cases.`;
 const getErrorMessage = (file: File, error: unknown) => `Something went wrong when reading ${file.name}
