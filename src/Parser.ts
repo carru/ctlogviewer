@@ -31,10 +31,10 @@ function preProcessXml(raw: string): string {
 	/**
 	 * Remove all characters other than
 	 * 	a-z, A-Z, 0-9, _
-	 * 	spaces and line breaks
+	 * 	spaces, line breaks, line feeds
 	 * 	<, >, =, :, [, ], ., /
 	 */
-	processed = processed.replaceAll(/[^\w\s<>=:\[\]\./]+/g, '');
+	processed = processed.replaceAll(/[^\w\r\n <>=:\[\]\./]+/g, '');
 
 	// Add quotes to attributes (those already with equal sign)
 	processed = processed.replaceAll(/^(\w*=)(.*)$/gm, '$1"$2"');
