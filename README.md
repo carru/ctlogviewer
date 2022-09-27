@@ -22,11 +22,13 @@ Out:08/18/2022 17:21:23.966-04:00
 </BusCode>
 ```
 To user friendly GUI:  
-(TODO add screenshot)
+![example](sample.png)
 
 ## Features
 
-* Display call parameters (input and output) next to the call; also in a tooltip on mouse hover.
+* Display call parameters (input and output) next to the call; also in a tooltip on mouse hover
+* Filter by name maintaining call hierarchy
 * Filter out calls with runtimes under configurable threshold
-* Highlight long running calls
+* Highlight calls over configurable threshold
 * Runs locally and offline; no need to upload anything anywhere
+* Dark and light themes
