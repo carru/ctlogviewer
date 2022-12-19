@@ -37,7 +37,7 @@ function App() {
 			if (!text) return;
 
 			try {
-				setData(parseXml(text as string));
+				setData(parseXml(text as string, f.name));
 			} catch (error: unknown) {
 				setErrorMessage(getErrorMessage(f, error));
 			}

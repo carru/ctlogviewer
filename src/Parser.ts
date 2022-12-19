@@ -2,10 +2,27 @@ import { XMLParser } from "fast-xml-parser";
 import { BusCode } from "./BusCode";
 import { StackTrace } from "./StackTrace";
 
-export function parseXml(xml: string): StackTrace {
+export function parseXml(xml: string, name: string): StackTrace {
+	// Read XML
 	const busCodes = xmlToBusCodeList(xml);
+
+	// Generate JSON string with hierarchy from XML object
 	const jsonString = busCodeListToJsonString(busCodes);
-	return JSON.parse(jsonString);
+
+	// Create master trace; necessary in case there's multiple traces in the log
+	const trace: StackTrace = {
+		timestamp: "",
+		name,
+		input: "",
+		output: "",
+		duration: 0,
+		children: JSON.parse(jsonString)
+	};
+
+	// Set duration
+	trace.children.forEach(c => trace.duration += c.duration);
+
+	return trace;
 }
 
 function xmlToBusCodeList(xml: string): [BusCode] {
@@ -76,5 +93,6 @@ function busCodeListToJsonString(list: [BusCode]): string {
 
 	batches.push(json);
 
-	return batches.join('');
+	// Merge batched strings and add [] in case there's multiple traces (processes)
+	return `[${batches.join('')}]`;
 }
